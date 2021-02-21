@@ -5,7 +5,7 @@ import axios from "axios";
 const Authentication = () => {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const [submitting, setIsSubmitting] = React.useState(false);
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
 
     const handleEmail = (e) => {
         setEmail(e);
@@ -17,12 +17,10 @@ const Authentication = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsSubmitting((prev) => !prev);
-        // setIsSubmitting(true);
-        // console.log(`data = ${email} ${password}`)
     };
 
     React.useEffect(() => {
-        if (!submitting) return;
+        if (!isSubmitting) return;
         axios("https://conduit.productionready.io/api/users/login", {
             method: "post",
             data: {
@@ -34,14 +32,13 @@ const Authentication = () => {
         })
             .then((res) => {
                 console.log(`res = ${res} `);
+                setIsSubmitting((prev) => !prev);
             })
-            .catch((error) => console.log(error));
-
-        // console.log(`submitting in useEffect = ${submitting} `)
-        setIsSubmitting((prev) => !prev);
+            .catch((error) => {
+                console.log(error);
+                setIsSubmitting((prev) => !prev);
+            });
     });
-
-    console.log(`submitting = ${submitting} `)
 
     return (
         <div className="auth-page">
@@ -83,13 +80,13 @@ const Authentication = () => {
                                         type="text"
                                         className="form-control form-control-lg"
                                         placeholder="Email Password"
-                                        // onChange={(e => handleEmail(e.target.value))}
                                         value={`Email: ${email} Password: ${password}`}
                                     ></input>
                                 </fieldset>
                                 <button
                                     className="btn btn-lg btn-primary pull-xs-right"
                                     type="submit"
+                                    disabled={isSubmitting}
                                 >
                                     Sign in
                                 </button>
