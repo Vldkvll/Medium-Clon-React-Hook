@@ -49,7 +49,7 @@ const Authentication = (props) => {
         if (!response) return;
         setToken(response.user.token);
         setIsSuccessfulSubmit(true);
-    }, [response]);
+    }, [response, setToken]);
 
     if (isSuccessfulSubmit) {
         return <Redirect to="/" />;
