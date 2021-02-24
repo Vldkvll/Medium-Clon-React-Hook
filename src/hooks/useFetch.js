@@ -15,14 +15,18 @@ const useFetch = (url) => {
 
     React.useEffect(() => {
         if (!isloading) return;
+        // console.log(' feTch User  options')
+        // console.log(options)
         axios(`${baseUrl}${url}`, options)
             .then((res) => {
                 console.log(`res = ${res} `);
-                setIsloading((prev) => !prev);
+                console.log(res);
+                console.log(res.data);
+                setIsloading(false);
                 setResponse(res.data);
             })
             .catch((error) => {
-                console.log(error.response.data);
+                console.log(error, error.response.data);
                 setError(error);
                 setIsloading((prev) => !prev);
             });

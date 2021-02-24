@@ -1,12 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 import useFetch from "../../hooks/useFetch";
 
-const Authentication = () => {
+const Authentication = (props) => {
+    const isLogin = props.match.path === "/login";
+
+    const pageTitle = isLogin ? "Sign In" : "Sign Up";
+    const descriptionLink = isLogin ? "/register" : "/login";
+    const descriptionText = isLogin ? "Need an account?" : "Have an account?";
+    const apiUrl = isLogin ? "users/login" : "users/";
+
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const [{ response, isloading, error }, doFetch] = useFetch("users/login");
+    const [username, setUsername] = React.useState("");
+    const [isSuccessfulSubmit, setIsSuccessfulSubmit] = React.useState(false);
+    const [{ response, isloading, error }, doFetch] = useFetch(apiUrl);
 
 
     const handleEmail = (e) => {
@@ -15,31 +24,58 @@ const Authentication = () => {
     const handlePassword = (e) => {
         setPassword(e);
     };
+    const handleUsername = (e) => {
+        setUsername(e);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log("data", email, "", password);
+        const user = isLogin
+            ? { email, password }
+            : { username, email, password };
         doFetch({
             method: "post",
             data: {
-                user: {
-                    email,
-                    password,
-                },
+                user,
             },
         });
     };
+
+    React.useEffect(() => {
+        if (!response) return;
+        localStorage.setItem('token', response.user.token)
+        setIsSuccessfulSubmit(true)
+    }, [response]);
+
+    if(isSuccessfulSubmit){
+        return <Redirect to='/' />
+    }
 
     return (
         <div className="auth-page">
             <div className="container page">
                 <div className="row">
                     <div className="col-md-6 offset-md-3 col-xs-12">
-                        <h1 className="text-xs-center">Login</h1>
+                        <h1 className="text-xs-center">{pageTitle}</h1>
                         <p className="text-xs-center">
-                            <Link to="register">Need an account?</Link>
+                            <Link to={descriptionLink}>{descriptionText}</Link>
                         </p>
                         <form onSubmit={handleSubmit}>
                             <fieldset>
+                                {!isLogin && (
+                                    <fieldset className="form-group">
+                                        <input
+                                            type="text"
+                                            className="form-control form-control-lg"
+                                            placeholder="Username"
+                                            value={`${username}`}
+                                            onChange={(e) =>
+                                                handleUsername(e.target.value)
+                                            }
+                                        ></input>
+                                    </fieldset>
+                                )}
                                 <fieldset className="form-group">
                                     <input
                                         type="email"
@@ -64,20 +100,12 @@ const Authentication = () => {
                                         }
                                     ></input>
                                 </fieldset>
-                                <fieldset className="form-group">
-                                    <input
-                                        type="text"
-                                        className="form-control form-control-lg"
-                                        placeholder="Email Password"
-                                        value={`Email: ${email} Password: ${password}`}
-                                    ></input>
-                                </fieldset>
                                 <button
                                     className="btn btn-lg btn-primary pull-xs-right"
                                     type="submit"
                                     disabled={isloading}
                                 >
-                                    Sign in
+                                    {pageTitle}
                                 </button>
                             </fieldset>
                         </form>
