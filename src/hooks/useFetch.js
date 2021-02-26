@@ -19,9 +19,9 @@ const useFetch = (url) => {
         // console.log(options)
         axios(`${baseUrl}${url}`, options)
             .then((res) => {
-                console.log(`res = ${res} `);
-                console.log(res);
-                console.log(res.data);
+                // console.log(`res = ${res} `);
+                // console.log(res);
+                // console.log(res.data);
                 setIsloading(false);
                 setResponse(res.data);
             })

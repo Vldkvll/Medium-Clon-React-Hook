@@ -3,18 +3,19 @@ import React from "react";
 // import GlobalFeed from "./Component/GlobalFeed/GlobalFeed";
 import { BrowserRouter } from "react-router-dom";
 import TopBar from "./Component/TopBar/TopBar";
+import { CurrentUserProvider } from "./contexts/currentUser";
 import Routes from "./modules/router";
 
 const App = () => {
     return (
-        <div>
+        <CurrentUserProvider>
             <BrowserRouter>
             <TopBar />
                 <Routes />
             </BrowserRouter>
             {/* <Article />
             <GlobalFeed /> */}
-        </div>
+        </CurrentUserProvider>
     );
 };
 
